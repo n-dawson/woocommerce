@@ -611,7 +611,15 @@ class WC_Meta_Box_Product_Data {
 	 * Show options for the variable product type
 	 */
 	public static function output_variations() {
-		global $post;
+		global $post, $wpdb;
+
+		$variations_count = intval( $wpdb->get_var( $wpdb->prepare( "
+			SELECT count( ID )
+			FROM $wpdb->posts
+			WHERE post_parent = %d
+			AND post_type = 'product_variation'
+			AND post_status IN ( 'private', 'publish' )
+		 ", $post->ID ) ) );
 
 		$attributes = maybe_unserialize( get_post_meta( $post->ID, '_product_attributes', true ) );
 
@@ -702,115 +710,8 @@ class WC_Meta_Box_Product_Data {
 					<a class="button bulk_edit"><?php _e( 'Go', 'woocommerce' ); ?></a>
 				</p>
 
-				<div class="woocommerce_variations wc-metaboxes">
-					<?php
-					// Get parent data
-					$parent_data = array(
-						'id'                   => $post->ID,
-						'attributes'           => $attributes,
-						'tax_class_options'    => $tax_class_options,
-						'sku'                  => get_post_meta( $post->ID, '_sku', true ),
-						'weight'               => wc_format_localized_decimal( get_post_meta( $post->ID, '_weight', true ) ),
-						'length'               => wc_format_localized_decimal( get_post_meta( $post->ID, '_length', true ) ),
-						'width'                => wc_format_localized_decimal( get_post_meta( $post->ID, '_width', true ) ),
-						'height'               => wc_format_localized_decimal( get_post_meta( $post->ID, '_height', true ) ),
-						'tax_class'            => get_post_meta( $post->ID, '_tax_class', true ),
-						'backorder_options'    => $backorder_options,
-						'stock_status_options' => $stock_status_options
-					);
+				<div id="woocommerce-variations" class="woocommerce_variations wc-metaboxes" data-count="<?php echo esc_attr( $variations_count ); ?>">
 
-					if ( ! $parent_data['weight'] ) {
-						$parent_data['weight'] = wc_format_localized_decimal( 0 );
-					}
-
-					if ( ! $parent_data['length'] ) {
-						$parent_data['length'] = wc_format_localized_decimal( 0 );
-					}
-
-					if ( ! $parent_data['width'] ) {
-						$parent_data['width'] = wc_format_localized_decimal( 0 );
-					}
-
-					if ( ! $parent_data['height'] ) {
-						$parent_data['height'] = wc_format_localized_decimal( 0 );
-					}
-
-					// Get variations
-					$args = array(
-						'post_type'   => 'product_variation',
-						'post_status' => array( 'private', 'publish' ),
-						'numberposts' => -1,
-						'orderby'     => 'menu_order',
-						'order'       => 'asc',
-						'post_parent' => $post->ID
-					);
-
-					$variations = get_posts( $args );
-					$loop = 0;
-
-					if ( $variations ) {
-
-						foreach ( $variations as $variation ) {
-							$variation_id     = absint( $variation->ID );
-							$variation_meta   = get_post_meta( $variation_id );
-							$variation_data   = array();
-							$shipping_classes = get_the_terms( $variation_id, 'product_shipping_class' );
-							$variation_fields = array(
-								'_sku'                   => '',
-								'_stock'                 => '',
-								'_regular_price'         => '',
-								'_sale_price'            => '',
-								'_weight'                => '',
-								'_length'                => '',
-								'_width'                 => '',
-								'_height'                => '',
-								'_download_limit'        => '',
-								'_download_expiry'       => '',
-								'_downloadable_files'    => '',
-								'_downloadable'          => '',
-								'_virtual'               => '',
-								'_thumbnail_id'          => '',
-								'_sale_price_dates_from' => '',
-								'_sale_price_dates_to'   => '',
-								'_manage_stock'          => '',
-								'_stock_status'          => '',
-								'_backorders'            => null,
-								'_tax_class'             => null
-							);
-
-							foreach ( $variation_fields as $field => $value ) {
-								$variation_data[ $field ] = isset( $variation_meta[ $field ][0] ) ? maybe_unserialize( $variation_meta[ $field ][0] ) : $value;
-							}
-
-							// Add the variation attributes
-							foreach ( $variation_meta as $key => $value ) {
-								if ( false !== strpos( $key, 'attribute_' ) ) {
-									$variation_data[ $key ] = $value;
-								}
-							}
-
-							// Formatting
-							$variation_data['_regular_price'] = wc_format_localized_price( $variation_data['_regular_price'] );
-							$variation_data['_sale_price']    = wc_format_localized_price( $variation_data['_sale_price'] );
-							$variation_data['_weight']        = wc_format_localized_decimal( $variation_data['_weight'] );
-							$variation_data['_length']        = wc_format_localized_decimal( $variation_data['_length'] );
-							$variation_data['_width']         = wc_format_localized_decimal( $variation_data['_width'] );
-							$variation_data['_height']        = wc_format_localized_decimal( $variation_data['_height'] );
-							$variation_data['_thumbnail_id']  = absint( $variation_data['_thumbnail_id'] );
-							$variation_data['image']          = $variation_data['_thumbnail_id'] ? wp_get_attachment_thumb_url( $variation_data['_thumbnail_id'] ) : '';
-							$variation_data['shipping_class'] = $shipping_classes && ! is_wp_error( $shipping_classes ) ? current( $shipping_classes )->term_id : '';
-
-							// Stock BW compat
-							if ( '' !== $variation_data['_stock'] ) {
-								$variation_data['_manage_stock'] = 'yes';
-							}
-
-							include( 'views/html-variation-admin.php' );
-
-							$loop++;
-						}
-					}
-					?>
 				</div>
 
 				<p class="toolbar">

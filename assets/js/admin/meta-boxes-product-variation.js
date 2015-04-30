@@ -1,6 +1,67 @@
 /* global wp, woocommerce_admin_meta_boxes_variations, woocommerce_admin, woocommerce_admin_meta_boxes, accounting */
 jQuery( function ( $ ) {
 
+	/**
+	 * WooCommerce Meta Box Variation class
+	 *
+	 * @author   WooThemes
+	 * @category Admin
+	 * @package  WooCommerce/Admin
+	 * @version  2.4.0
+	 */
+	var wc_meta_boxes_variation = {
+
+		/**
+		 * Initialize the variations meta box events
+		 *
+		 * @since 2.4.0
+		 */
+		init: function() {
+			$( 'li.variations_options a' ).on( 'click', this.load_variations );
+		},
+
+		/**
+		 * Get variations by ajax
+		 *
+		 * @since  2.4.0
+		 * @param  {int} count
+		 * @param  {int} page
+		 * @return {string}
+		 */
+		get_variations: function( count, page ) {
+			count = count | 10;
+			page  = count | 1;
+
+			return '';
+		},
+
+		/**
+		 * Load variations
+		 *
+		 * Load some variations when open the variations tab
+		 *
+		 * @since 2.4.0
+		 */
+		load_variations: function() {
+			var wrapper = $( '#woocommerce-variations' ),
+				count   = parseInt( wrapper.data( 'count' ), 10 );
+
+			if ( 0 === wrapper.find( '.woocommerce_variation' ).length ) {
+				if ( 0 < count ) {
+					var html = this.get_variations();
+
+					wrapper.empty();
+
+					wrapper.prepend( html );
+				} else {
+					wrapper.prepend( '<div class="woocommerce-message notice"><p>' + woocommerce_admin_meta_boxes_variations.i18n_no_variations_found + '</p></div>' );
+				}
+			}
+		}
+	};
+
+	wc_meta_boxes_variation.init();
+
 	var variation_sortable_options = {
 		items: '.woocommerce_variation',
 		cursor: 'move',
@@ -142,7 +203,7 @@ jQuery( function ( $ ) {
 					security: woocommerce_admin_meta_boxes_variations.delete_variations_nonce
 				};
 
-				$.post( woocommerce_admin_meta_boxes_variations.ajax_url, data, function ( response ) {
+				$.post( woocommerce_admin_meta_boxes_variations.ajax_url, data, function() {
 					// Success
 					$( el ).fadeOut( '300', function () {
 						$( el ).remove();
@@ -159,7 +220,7 @@ jQuery( function ( $ ) {
 		return false;
 	});
 
-	$( '.wc-metaboxes-wrapper' ).on( 'click', 'a.bulk_edit', function ( event ) {
+	$( '.wc-metaboxes-wrapper' ).on( 'click', 'a.bulk_edit', function() {
 		var bulk_edit  = $( 'select#field_to_edit' ).val(),
 			checkbox,
 			answer,
@@ -204,7 +265,7 @@ jQuery( function ( $ ) {
 							}
 						});
 
-						$( '.woocommerce_variations .woocommerce_variation .remove_variation' ).each( function () {
+						$( '.woocommerce_variations .woocommerce_variation .remove_variation' ).each( function() {
 
 							var variation = $( this ).attr( 'rel' );
 							if ( variation > 0 ) {
@@ -218,8 +279,8 @@ jQuery( function ( $ ) {
 							security: woocommerce_admin_meta_boxes_variations.delete_variations_nonce
 						};
 
-						$.post( woocommerce_admin_meta_boxes_variations.ajax_url, data, function( response ) {
-							$( '.woocommerce_variations .woocommerce_variation' ).fadeOut( '300', function () {
+						$.post( woocommerce_admin_meta_boxes_variations.ajax_url, data, function() {
+							$( '.woocommerce_variations .woocommerce_variation' ).fadeOut( '300', function() {
 								$( '.woocommerce_variations .woocommerce_variation' ).remove();
 							});
 						});
@@ -290,12 +351,12 @@ jQuery( function ( $ ) {
 				var end   = window.prompt( woocommerce_admin_meta_boxes_variations.i18n_scheduled_sale_end );
 				var set   = false;
 
-				if ( start != null && start != '' ) {
+				if ( start !== null && start !== '' ) {
 					$('.woocommerce_variable_attributes .sale_schedule').click();
 					$( ':input[name^="variable_sale_price_dates_from"]').val( start ).change();
 					set = true;
 				}
-				if ( end != null && end != '') {
+				if ( end !== null && end !== '') {
 					$('.woocommerce_variable_attributes .sale_schedule').click();
 					$( ':input[name^="variable_sale_price_dates_to"]').val( end ).change();
 					set = true;

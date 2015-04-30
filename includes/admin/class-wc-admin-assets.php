@@ -174,9 +174,9 @@ class WC_Admin_Assets {
 				'plugin_url'                          => WC()->plugin_url(),
 				'ajax_url'                            => admin_url( 'admin-ajax.php' ),
 				'woocommerce_placeholder_img_src'     => wc_placeholder_img_src(),
-				'add_variation_nonce'                 => wp_create_nonce("add-variation"),
-				'link_variation_nonce'                => wp_create_nonce("link-variations"),
-				'delete_variations_nonce'             => wp_create_nonce("delete-variations"),
+				'add_variation_nonce'                 => wp_create_nonce( 'add-variation' ),
+				'link_variation_nonce'                => wp_create_nonce( 'link-variations' ),
+				'delete_variations_nonce'             => wp_create_nonce( 'delete-variations' ),
 				'i18n_link_all_variations'            => esc_js( __( 'Are you sure you want to link all variations? This will create a new variation for each and every possible combination of variation attributes (max 50 per run).', 'woocommerce' ) ),
 				'i18n_enter_a_value'                  => esc_js( __( 'Enter a value', 'woocommerce' ) ),
 				'i18n_enter_a_value_fixed_or_percent' => esc_js( __( 'Enter a value (fixed or %)', 'woocommerce' ) ),
@@ -184,12 +184,14 @@ class WC_Admin_Assets {
 				'i18n_last_warning'                   => esc_js( __( 'Last warning, are you sure?', 'woocommerce' ) ),
 				'i18n_choose_image'                   => esc_js( __( 'Choose an image', 'woocommerce' ) ),
 				'i18n_set_image'                      => esc_js( __( 'Set variation image', 'woocommerce' ) ),
-				'i18n_variation_added'                => esc_js( __( "variation added", 'woocommerce' ) ),
-				'i18n_variations_added'               => esc_js( __( "variations added", 'woocommerce' ) ),
-				'i18n_no_variations_added'            => esc_js( __( "No variations added", 'woocommerce' ) ),
+				'i18n_variation_added'                => esc_js( __( 'variation added', 'woocommerce' ) ),
+				'i18n_variations_added'               => esc_js( __( 'variations added', 'woocommerce' ) ),
+				'i18n_no_variations_added'            => esc_js( __( 'No variations added', 'woocommerce' ) ),
 				'i18n_remove_variation'               => esc_js( __( 'Are you sure you want to remove this variation?', 'woocommerce' ) ),
 				'i18n_scheduled_sale_start'           => esc_js( __( 'Sale start date (YYYY-MM-DD format or leave blank)', 'woocommerce' ) ),
-				'i18n_scheduled_sale_end'             => esc_js( __( 'Sale end date  (YYYY-MM-DD format or leave blank)', 'woocommerce' ) )
+				'i18n_scheduled_sale_end'             => esc_js( __( 'Sale end date (YYYY-MM-DD format or leave blank)', 'woocommerce' ) ),
+				'i18n_no_variations_found'            => esc_js( __( 'This product has no variation.' ) ),
+				'i18n_add_new_variation'              => esc_js( __( 'Add a new variation' ) ),
 			);
 
 			wp_localize_script( 'wc-admin-variation-meta-boxes', 'woocommerce_admin_meta_boxes_variations', $params );
