@@ -133,7 +133,7 @@ class WC_Admin_Exporters {
 		$exporter->set_page( $step );
 		$exporter->generate_file();
 
-		if ( 100 === $exporter->get_percent_complete() ) {
+		if ( 100 >= $exporter->get_percent_complete() ) {
 			wp_send_json_success( array(
 				'step'       => 'done',
 				'percentage' => 100,
