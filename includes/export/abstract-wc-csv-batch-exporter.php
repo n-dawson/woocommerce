@@ -135,7 +135,13 @@ abstract class WC_CSV_Batch_Exporter extends WC_CSV_Exporter {
 	 * @return int
 	 */
 	public function get_total_exported() {
-		return ( $this->get_page() * $this->get_limit() ) + $this->exported_row_count;
+		$total_exported = ( $this->get_page() * $this->get_limit() ) + $this->exported_row_count;
+
+		if ( $total_exported > $this->total_rows ) {
+			$total_exported = $this->total_rows;
+		}
+
+		return $total_exported;
 	}
 
 	/**
